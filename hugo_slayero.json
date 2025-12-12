@@ -1,0 +1,67 @@
+{
+  "videos": [
+    {
+      "titulo": "Fortnite · Arena tryhard",
+      "juego": "Fortnite",
+      "duracion": "1:00",
+      "fecha": "hace 3 días",
+      "videoId": "hTtf8jyVkMc"
+    },
+    {
+      "titulo": "Fortnite cero construcción",
+      "juego": "Fortnite",
+      "duracion": "1:00",
+      "fecha": "hace 1 semana",
+      "videoId": "FHO6iimXprU"
+    },
+    {
+      "titulo": "Rocket League · Subiendo a champ",
+      "juego": "Rocket League",
+      "duracion": "14:22",
+      "fecha": "hace 4 días",
+      "videoId": "26bbe4XD9rk"
+    },
+    {
+      "titulo": "GTA Online · Caos con subs",
+      "juego": "GTA",
+      "duracion": "25:33",
+      "fecha": "hace 6 días",
+      "videoId": "WpYeekQkAdc"
+    },
+    {
+      "titulo": "Phasmophobia · Fantasma enfadado",
+      "juego": "Phasmophobia",
+      "duracion": "21:08",
+      "fecha": "hace 5 días",
+      "videoId": "3GwjfUFyY6M"
+    },
+    {
+      "titulo": "Minecraft survival · Nuevo mundo",
+      "juego": "Minecraft",
+      "duracion": "18:05",
+      "fecha": "hace 2 semanas",
+      "videoId": "fJ9rUzIMcZQ"
+    },
+    {
+      "titulo": "Rocket League · Practicando",
+      "juego": "Rocket League",
+      "duracion": "1:00",
+      "fecha": "hace 9 días",
+      "videoId": "r_GeTsNfRZo"
+    }
+  ],
+  "directos": [
+    {
+      "titulo": "Directo Roblox · Ranked night",
+      "juego": "Roblox",
+      "fecha": "Hoy · 21:30",
+      "estado": "Programado"
+    },
+    {
+      "titulo": "Noche Fortnite & Rocket League",
+      "juego": "Fortnite / RL",
+      "fecha": "Viernes · 22:00",
+      "estado": "Próximamente"
+    }
+  ]
+}
