@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CobaltGaming Hub · App del canal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body {
+      background: radial-gradient(circle at top, #020617 0, #020617 45%, #020617 100%);
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem 0.5rem;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    .app-shell {
+      width: 400px;
+      max-width: 100%;
+      min-height: 720px;
+      border-radius: 1.6rem;
+      background: radial-gradient(circle at top, #111827 0, #020617 55%);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .splash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, #1d2a4a 0, #020617 55%, #000000 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+      z-index: 20;
+    }
+    .splash-logo {
+      width: 110px;
+      height: 110px;
+      border-radius: 2rem;
+      background: conic-gradient(from 160deg, #6366f1, #22c55e, #ec4899, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      margin-bottom: 1.1rem;
+    }
+    .splash-logo img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+    .splash-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .splash-sub {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      margin-bottom: 1.1rem;
+    }
+    .splash-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      margin-bottom: 1.3rem;
+    }
+    .splash-tag {
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.85);
+    }
+    .splash-btn {
+      padding: 0.5rem 1.6rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: #f9fafb;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.7);
+    }
+    .splash-note {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 0.6rem;
+    }
+
+    .app-header {
+      padding: 0.7rem 1.1rem 0.6rem;
+      border-bottom: 1px solid rgba(31, 41, 55, 1);
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 0.5rem; }
+    .brand-avatar {
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 2px solid rgba(96, 165, 250, 0.8);
+      overflow: hidden;
+    }
+    .brand-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text strong { font-size: 0.95rem; letter-spacing: 0.03em; }
+    .brand-text span { font-size: 0.7rem; color: #9ca3af; }
+    .live-pill {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(239, 68, 68, 0.8);
+      font-size: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: #fecaca;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 999px;
+      background: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+    }
+
+    .app-main {
+      flex: 1;
+      padding: 0.9rem 1.1rem 0.5rem;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 transparent;
+    }
+    .app-main::-webkit-scrollbar { width: 6px; }
+    .app-main::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 999px; }
+
+    .profile-card {
+      display: flex;
+      gap: 0.7rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: 1rem;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.3), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(55, 65, 81, 1);
+      margin-bottom: 0.7rem;
+    }
+    .profile-pic-large {
+      width: 52px; height: 52px; border-radius: 999px;
+      border: 2px solid rgba(251, 191, 36, 0.9);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .profile-pic-large img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .profile-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .profile-info h1 { font-size: 0.95rem; }
+    .profile-info p { font-size: 0.8rem; color: #d1d5db; line-height: 1.4; }
+    .profile-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.15rem; }
+    .profile-tag {
+      font-size: 0.7rem; padding: 0.12rem 0.45rem;
+      border-radius: 999px; border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .btn-main {
+      margin-top: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: #f9fafb;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(129, 140, 248, 0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .hero-card {
+      border-radius: 1rem;
+      padding: 0.8rem 0.8rem 0.7rem;
+      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.25), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(55, 65, 81, 1);
+      margin-bottom: 0.8rem;
+    }
+    .hero-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .hero-sub { font-size: 0.8rem; color: #9ca3af; }
+    .hero-badges {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin-top: 0.5rem; font-size: 0.75rem;
+    }
+    .hero-badge {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.3rem;
+      padding: 0.3rem;
+      margin-bottom: 0.8rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 1);
+      border: 1px solid rgba(31, 41, 55, 1);
+      font-size: 0.8rem;
+    }
+    .tab {
+      flex: 1;
+      padding: 0.35rem 0.3rem;
+      text-align: center;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #9ca3af;
+    }
+    .tab.active {
+      background: radial-gradient(circle at top, #4f46e5, #db2777);
+      color: #f9fafb;
+      font-weight: 600;
+    }
+
+    .section-heading {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-heading span { font-size: 0.75rem; color: #9ca3af; font-weight: 400; }
+
+    .cards-list { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem; }
+    .content-card {
+      border-radius: 0.9rem;
+      padding: 0.5rem 0.6rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(31, 41, 55, 1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+    .content-main { display: flex; flex-direction: column; gap: 0.15rem; }
+    .content-title { font-size: 0.83rem; font-weight: 600; }
+    .content-meta { font-size: 0.72rem; color: #9ca3af; }
+    .content-tag {
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 1);
+      font-size: 0.7rem;
+      color: #e5e7eb;
+      text-align: center;
+      min-width: 70px;
+    }
+    .empty { font-size: 0.75rem; color: #6b7280; text-align: center; padding: 0.9rem 0.3rem; }
+
+    .video-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .video-filter-btn {
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 1);
+      background: rgba(15, 23, 42, 0.98);
+      color: #9ca3af;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .video-filter-btn.active {
+      background: radial-gradient(circle at top, #4f46e5, #db2777);
+      color: #f9fafb;
+      border-color: transparent;
+    }
+
+    .video-player {
+      margin-bottom: 0.6rem;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 1);
+      background: #020617;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .video-player iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .notify-card {
+      margin-top: 0.9rem;
+      border-radius: 1rem;
+      padding: 0.7rem 0.75rem 0.8rem;
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.3), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.8rem;
+    }
+    .notify-card h3 { font-size: 0.9rem; margin-bottom: 0.2rem; }
+    .notify-card p { font-size: 0.78rem; color: #e5e7eb; margin-bottom: 0.5rem; }
+    .notify-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .btn-notify {
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-notify.grey {
+      background: #6b7280;
+    }
+    .notify-status {
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      color: #bbf7d0;
+      display: none;
+    }
+
+    .contact-card {
+      border-radius: 1rem;
+      padding: 0.7rem 0.75rem 0.7rem;
+      background: #111827;
+      border: 1px solid rgba(55, 65, 81, 1);
+      font-size: 0.8rem;
+    }
+    .contact-card p { font-size: 0.78rem; color: #e5e7eb; margin-bottom: 0.5rem; }
+
+    .chat-wrapper {
+      background: #0f172a;
+      border-radius: 0.8rem;
+      border: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      height: 230px;
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid #1f2937;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header strong { color: #e5e7eb; font-size: 0.78rem; }
+    .chat-messages {
+      flex: 1;
+      padding: 0.5rem 0.6rem;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 999px; }
+
+    .chat-message {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.76rem;
+    }
+    .chat-avatar {
+      width: 24px; height: 24px; border-radius: 999px;
+      background: #374151;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .chat-avatar.me { background: #4f46e5; }
+    .chat-avatar.user { background: #6b7280; }
+    .chat-content { display: flex; flex-direction: column; }
+    .chat-header-line {
+      display: flex;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+    }
+    .chat-name.me { color: #a5b4fc; font-weight: 600; }
+    .chat-name.user { color: #f97316; font-weight: 600; }
+    .chat-time { color: #6b7280; }
+    .chat-text { color: #e5e7eb; font-size: 0.76rem; }
+
+    .chat-input-area {
+      border-top: 1px solid #1f2937;
+      padding: 0.4rem 0.5rem;
+      display: flex;
+      gap: 0.35rem;
+      align-items: center;
+      background: #111827;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 0.35rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #f9fafb;
+      font-size: 0.75rem;
+    }
+    .chat-input-area input::placeholder { color: #6b7280; }
+    .btn-chat-send {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: none;
+      background: #4f46e5;
+      color: #f9fafb;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .app-footer {
+      padding: 0.6rem 1.1rem 0.8rem;
+      border-top: 1px solid rgba(31, 41, 55, 1);
+      font-size: 0.7rem;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-links { display: flex; gap: 0.7rem; }
+    .footer-links a { color: #9ca3af; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- SPLASH -->
+    <div class="splash" id="splash">
+      <div class="splash-logo">
+        <img src="generated-image.png" alt="Logo CobaltGaming Hub">
+      </div>
+      <div class="splash-title">CobaltGaming Hub</div>
+      <div class="splash-sub">
+        Todo tu mundo gamer en una sola app.
+      </div>
+      <div class="splash-tags">
+        <span class="splash-tag">Vídeos</span>
+        <span class="splash-tag">Directos</span>
+        <span class="splash-tag">Minecraft</span>
+        <span class="splash-tag">Fortnite</span>
+        <span class="splash-tag">GTA</span>
+        <span class="splash-tag">Phasmophobia</span>
+        <span class="splash-tag">Rocket League</span>
+        <span class="splash-tag">Comunidad</span>
+      </div>
+      <button class="splash-btn" onclick="enterApp()">Entrar a la app</button>
+      <div class="splash-note">Demo fan-made del canal CobaltGaming.</div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-avatar">
+          <img src="generated-image.png" alt="Avatar canal">
+        </div>
+        <div class="brand-text">
+          <strong>CobaltGaming Hub</strong>
+          <span>roblox · gaming · comunidad</span>
+        </div>
+      </div>
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        Próximo directo
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- PERFIL -->
+      <section class="profile-card">
+        <div class="profile-pic-large">
+          <img src="channels4_profile.jpg" alt="Imagen del canal">
+        </div>
+        <div class="profile-info">
+          <h1>Hey, soy Hugo_slayero 👾</h1>
+          <div class="profile-tags">
+            <span class="profile-tag">Roblox</span>
+            <span class="profile-tag">Fortnite</span>
+            <span class="profile-tag">Rocket League</span>
+            <span class="profile-tag">GTA</span>
+            <span class="profile-tag">Phasmophobia</span>
+            <span class="profile-tag">Minecraft</span>
+          </div>
+          <button class="btn-main" onclick="setActiveTab('videos')">
+            Ver vídeos por juego ▶
+          </button>
+        </div>
+      </section>
+
+      <!-- HERO -->
+      <section class="hero-card">
+        <div class="hero-title">Lo que se viene esta semana</div>
+        <div class="hero-sub">
+          Nuevos episodios de series, directos rankeds y fails del chat para clips.
+        </div>
+        <div class="hero-badges">
+          <div class="hero-badge">🗓️ Directo viernes </div>
+          <div class="hero-badge">🎮 Noche de Fortnite & Rocket League</div>
+          <div class="hero-badge">👻 Sesión de Phasmophobia con sustos</div>
+        </div>
+      </section>
+
+      <!-- TABS -->
+      <nav class="tabs">
+        <div class="tab active" data-tab="videos" onclick="setActiveTab('videos')">Vídeos</div>
+        <div class="tab" data-tab="directos" onclick="setActiveTab('directos')">Directos</div>
+        <div class="tab" data-tab="contacto" onclick="setActiveTab('contacto')">Chat</div>
+        <div class="tab" data-tab="perfil" onclick="setActiveTab('perfil')">Sobre mí</div>
+      </nav>
+
+      <section id="content-area"></section>
+
+      <!-- NOTIFICACIONES -->
+      <section class="notify-card">
+        <h3>Quiero enterarme de todo lo nuevo</h3>
+        <p>
+          Activa esta opción para que la app recuerde que quieres estar siempre al día
+          de nuevos vídeos, directos y eventos (demo dentro de la app).
+        </p>
+        <div class="notify-btns">
+          <button class="btn-notify" type="button" onclick="toggleNotify(true)">Activar avisos</button>
+          <button class="btn-notify grey" type="button" onclick="toggleNotify(false)">Desactivar</button>
+        </div>
+        <div class="notify-status" id="notify-status">
+          Notificaciones internas activadas para esta sesión de la app.
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>© 2025 CobaltGaming</span>
+      <div class="footer-links">
+        <a href="https://www.youtube.com/@hugo_slayero" target="_blank">YouTube</a>
+        <a href="#">Discord</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // URL del JSON con los datos del canal @hugo_slayero
+    // Sube un archivo tipo hugo_slayero.json a tu hosting y pon la URL aquí.
+    const VIDEOS_API_URL = "hugo_slayero.json";
+
+    // Estado global de la app
+    let data = {
+      videos: [],
+      directos: []
+    };
+
+    const filtros = [
+      { id: "todos", label: "Todos" },
+      { id: "Minecraft", label: "Minecraft" },
+      { id: "Fortnite", label: "Fortnite" },
+      { id: "GTA", label: "GTA" },
+      { id: "Phasmophobia", label: "Phasmophobia" },
+      { id: "Rocket League", label: "Rocket League" }
+    ];
+    let filtroActivo = "todos";
+    let videoActual = null;
+    let datosCargados = false;
+    let cargaFallida = false;
+
+    function enterApp() {
+      const splash = document.getElementById("splash");
+      if (splash) splash.style.display = "none";
+    }
+
+    async function cargarDatos() {
+      try {
+        const resp = await fetch(VIDEOS_API_URL);
+        if (!resp.ok) throw new Error("Error HTTP " + resp.status);
+        const json = await resp.json();
+        data.videos = Array.isArray(json.videos) ? json.videos : [];
+        data.directos = Array.isArray(json.directos) ? json.directos : [];
+        datosCargados = true;
+        renderTab("videos");
+      } catch (err) {
+        console.error("Error cargando datos de vídeos:", err);
+        cargaFallida = true;
+        datosCargados = true;
+        renderTab("videos");
+      }
+    }
+
+    function setActiveTab(tab) {
+      document.querySelectorAll(".tab").forEach(t => {
+        t.classList.toggle("active", t.dataset.tab === tab);
+      });
+      renderTab(tab);
+    }
+
+    function renderVideos(container) {
+      const sectionTitle = document.createElement("div");
+      sectionTitle.className = "section-heading";
+      sectionTitle.innerHTML = 'Vídeos por juego <span>Elige uno para verlo dentro de la app</span>';
+      container.appendChild(sectionTitle);
+
+      if (!datosCargados) {
+        const loading = document.createElement("div");
+        loading.className = "empty";
+        loading.textContent = "Cargando vídeos del canal...";
+        container.appendChild(loading);
+        return;
+      }
+
+      if (cargaFallida) {
+        const error = document.createElement("div");
+        error.className = "empty";
+        error.textContent = "No se han podido cargar los vídeos. Revisa la URL del JSON.";
+        container.appendChild(error);
+        return;
+      }
+
+      const player = document.createElement("div");
+      player.className = "video-player";
+      player.id = "video-player";
+
+      if (videoActual && videoActual.videoId) {
+        player.innerHTML =
+          `<iframe src="https://www.youtube.com/embed/${videoActual.videoId}?autoplay=1"
+             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+             allowfullscreen></iframe>`;
+      } else {
+        player.textContent = "Selecciona un vídeo para verlo aquí.";
+      }
+      container.appendChild(player);
+
+      const filtersRow = document.createElement("div");
+      filtersRow.className = "video-filters";
+
+      filtros.forEach(f => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "video-filter-btn" + (f.id === filtroActivo ? " active" : "");
+        btn.textContent = f.label;
+        btn.onclick = () => {
+          filtroActivo = f.id;
+          setActiveTab("videos");
+        };
+        filtersRow.appendChild(btn);
+      });
+
+      container.appendChild(filtersRow);
+
+      const list = document.createElement("div");
+      list.className = "cards-list";
+
+      const filtrados = data.videos.filter(v =>
+        filtroActivo === "todos" ? true : v.juego === filtroActivo
+      );
+
+      if (!filtrados.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No hay vídeos en esta categoría aún (revisa el JSON).";
+        container.appendChild(empty);
+        return;
+      }
+
+      filtrados.forEach(v => {
+        const card = document.createElement("article");
+        card.className = "content-card";
+        card.onclick = () => {
+          videoActual = v;
+          setActiveTab("videos");
+        };
+        card.innerHTML = `
+          <div class="content-main">
+            <div class="content-title">${v.titulo}</div>
+            <div class="content-meta">${v.juego} · ${v.duracion} · ${v.fecha}</div>
+          </div>
+          <div class="content-tag">${v.juego}</div>
+        `;
+        list.appendChild(card);
+      });
+
+      container.appendChild(list);
+    }
+
+    function renderTab(tab) {
+      const container = document.getElementById("content-area");
+      container.innerHTML = "";
+
+      if (tab === "videos") {
+        renderVideos(container);
+      }
+
+      if (tab === "directos") {
+        const sectionTitle = document.createElement("div");
+        sectionTitle.className = "section-heading";
+        sectionTitle.innerHTML = 'Directos del canal <span>Programados y especiales</span>';
+        container.appendChild(sectionTitle);
+
+        if (!datosCargados) {
+          const loading = document.createElement("div");
+          loading.className = "empty";
+          loading.textContent = "Cargando directos...";
+          container.appendChild(loading);
+          return;
+        }
+
+        if (!data.directos.length) {
+          container.innerHTML += '<div class="empty">No hay directos añadidos en el JSON.</div>';
+          return;
+        }
+
+        const list = document.createElement("div");
+        list.className = "cards-list";
+
+        data.directos.forEach(d => {
+          const card = document.createElement("article");
+          card.className = "content-card";
+          card.innerHTML = `
+            <div class="content-main">
+              <div class="content-title">${d.titulo}</div>
+              <div class="content-meta">${d.juego} · ${d.fecha}</div>
+            </div>
+            <div class="content-tag">${d.estado}</div>
+          `;
+          list.appendChild(card);
+        });
+
+        container.appendChild(list);
+      }
+
+      if (tab === "contacto") {
+        const sectionTitle = document.createElement("div");
+        sectionTitle.className = "section-heading";
+        sectionTitle.innerHTML = 'Chat del canal <span>Escribe como si fuera un mini Discord</span>';
+        container.appendChild(sectionTitle);
+
+        const card = document.createElement("div");
+        card.className = "contact-card";
+        card.innerHTML = `
+          <p>
+            Chat interno de la app. Los mensajes se guardan en tu navegador (localStorage),
+            así que seguirás viéndolos aunque recargues.
+          </p>
+          <div class="chat-wrapper">
+            <div class="chat-header">
+              <strong>#general</strong>
+              <span>Comunidad CobaltGaming</span>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-area">
+              <input type="text" id="chat-input" placeholder="Escribe un mensaje..." />
+              <button class="btn-chat-send" id="chat-send">Enviar</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+
+        initChat();
+      }
+
+      if (tab === "perfil") {
+        const sectionTitle = document.createElement("div");
+        sectionTitle.className = "section-heading";
+        sectionTitle.innerHTML = 'Sobre el canal <span>Personaliza este texto a tu gusto</span>';
+        container.appendChild(sectionTitle);
+
+        const box = document.createElement("div");
+        box.className = "cards-list";
+        box.innerHTML = `
+          <article class="content-card">
+            <div class="content-main">
+              <div class="content-title">¿Quién es CobaltGaming?</div>
+              <div class="content-meta">
+                Creador de contenido centrado en Roblox, Fortnite, Rocket League, GTA,
+                Phasmophobia y Minecraft. Cambia este texto por tu propia descripción,
+                horarios y lo que sueles hacer en los directos.
+              </div>
+            </div>
+          </article>
+          <article class="content-card">
+            <div class="content-main">
+              <div class="content-title">Comunidad y normas</div>
+              <div class="content-meta">
+                Aquí puedes añadir las normas básicas del chat, cómo unirse al Discord del canal,
+                y cualquier otra info importante para la comunidad.
+              </div>
+            </div>
+          </article>
+        `;
+        container.appendChild(box);
+      }
+    }
+
+    function initChat() {
+      const messagesEl = document.getElementById("chat-messages");
+      const inputEl = document.getElementById("chat-input");
+      const sendBtn = document.getElementById("chat-send");
+      if (!messagesEl || !inputEl || !sendBtn) return;
+
+      const STORAGE_KEY = "cobaltgaming_chat";
+
+      function cargarMensajes() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+
+      function guardarMensajes(lista) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+        } catch {}
+      }
+
+      function ahora() {
+        const d = new Date();
+        const h = String(d.getHours()).padStart(2, "0");
+        const m = String(d.getMinutes()).padStart(2, "0");
+        return `${h}:${m}`;
+      }
+
+      let mensajes = cargarMensajes();
+      if (!mensajes || !Array.isArray(mensajes) || !mensajes.length) {
+        mensajes = [
+          { autor: "CobaltGaming", tipo: "me", texto: "Bienvenido al chat de la app 👋", hora: ahora() },
+          { autor: "Bot", tipo: "user", texto: "Escribe tu primer mensaje para presentarte a la comunidad.", hora: ahora() }
+        ];
+        guardarMensajes(mensajes);
+      }
+
+      function renderMensaje(msg) {
+        const div = document.createElement("div");
+        div.className = "chat-message";
+        div.innerHTML = `
+          <div class="chat-avatar ${msg.tipo === "me" ? "me" : "user"}">
+            ${msg.tipo === "me" ? "CG" : "U"}
+          </div>
+          <div class="chat-content">
+            <div class="chat-header-line">
+              <span class="chat-name ${msg.tipo === "me" ? "me" : "user"}">${msg.autor}</span>
+              <span class="chat-time">${msg.hora}</span>
+            </div>
+            <div class="chat-text">${msg.texto}</div>
+          </div>
+        `;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function renderTodos() {
+        messagesEl.innerHTML = "";
+        mensajes.forEach(renderMensaje);
+      }
+
+      renderTodos();
+
+      function sendMessage() {
+        const text = inputEl.value.trim();
+        if (!text) return;
+        const msg = { autor: "Tú", tipo: "user", texto: text, hora: ahora() };
+        mensajes.push(msg);
+        guardarMensajes(mensajes);
+        renderMensaje(msg);
+        inputEl.value = "";
+      }
+
+      sendBtn.onclick = sendMessage;
+      inputEl.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+
+    function toggleNotify(on) {
+      const status = document.getElementById("notify-status");
+      if (!status) return;
+      if (on) {
+        status.textContent = "Notificaciones internas activadas para esta sesión de la app.";
+        status.style.display = "block";
+      } else {
+        status.textContent = "Has desactivado las notificaciones internas para esta sesión.";
+        status.style.display = "block";
+      }
+    }
+
+    // Carga inicial
+    cargarDatos();
+    renderTab("videos");
+  </script>
+</body>
+</html>
